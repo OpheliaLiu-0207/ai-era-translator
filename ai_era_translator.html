@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 時代語氣翻譯機 — 一句話，看見語氣背後的文化</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="config.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: {
+                            DEFAULT: '#2E2723',
+                            light: '#7C746C',
+                        },
+                        xuan: {
+                            DEFAULT: '#F7F1E3',
+                            light: '#FBF7ED',
+                            dark: '#E8D8B8',
+                        },
+                        cinnabar: {
+                            DEFAULT: '#A64036',
+                            hover: '#8F342C',
+                            light: '#D9A29A',
+                        },
+                        gold: '#C6A15B',
+                        pine: '#3F5A4A',
+                        coal: '#2A2E33',
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 宣紙紋理與古風細節 */
+        body {
+            background-color: #F7F1E3;
+            background-image: radial-gradient(rgba(107, 79, 58, 0.05) 1px, transparent 0),
+                              radial-gradient(rgba(107, 79, 58, 0.05) 1px, transparent 0);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            color: #2E2723;
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .serif-title {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 宣紙微風邊界效果 */
+        .xuan-card {
+            background: #FBF7ED;
+            border: 1px solid #E8D8B8;
+            box-shadow: 0 4px 20px -2px rgba(107, 79, 58, 0.08);
+            position: relative;
+        }
+
+        .xuan-card::after {
+            content: '';
+            position: absolute;
+            top: 2px; right: 2px; bottom: 2px; left: 2px;
+            border: 1px dashed rgba(198, 161, 91, 0.3);
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        /* 水墨漸變背景裝飾 */
+        .ink-splash-bg {
+            background: radial-gradient(circle at top right, rgba(46, 39, 35, 0.04) 0%, transparent 70%);
+        }
+
+        /* 古籍印章風格效果 */
+        .ancient-stamp {
+            border: 2px solid #A64036;
+            color: #A64036;
+            font-family: 'Noto Serif TC', serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            transform: rotate(-3deg);
+            display: inline-block;
+        }
+
+        /* 自訂滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7F1E3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C6A15B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #A64036;
+        }
+
+        /* 動畫效果 */
+        @keyframes inkDiffuse {
+            0% { filter: blur(10px); opacity: 0; transform: scale(0.95); }
+            100% { filter: blur(0px); opacity: 1; transform: scale(1); }
+        }
+        .ink-fade-in {
+            animation: inkDiffuse 1s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+
+        /* 水墨載入動畫 */
+        .ink-loader {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #2E2723 0%, rgba(46,39,35,0) 70%);
+            animation: pulse 1.8s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.6); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col ink-splash-bg">
+
+    <!-- 頂部導覽列 -->
+    <header class="sticky top-0 z-50 bg-[#F8F1E3]/90 backdrop-blur-md border-b border-[#D8C7A3] py-4 px-6 md:px-12 flex justify-between items-center">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="navigate('landing')">
+            <div class="w-9 h-9 bg-cinnabar rounded-md flex items-center justify-center text-xuan font-bold text-lg serif-title">譯</div>
+            <div>
+                <h1 class="text-xl font-bold serif-title tracking-wider text-ink flex items-center">
+                    AI 時代語氣翻譯機
+                </h1>
+                <p class="text-[10px] text-ink-light tracking-widest hidden md:block">一句話，看見語氣背後的文化</p>
+            </div>
+        </div>
+        
+        <!-- 導航選單 -->
+        <nav class="flex items-center space-x-6 md:space-x-8 text-sm font-medium">
+            <button onclick="navigate('landing')" class="hover:text-cinnabar transition-colors text-ink">首頁</button>
+            <button onclick="navigate('quick-demo')" class="hover:text-cinnabar transition-colors text-ink">快速體驗</button>
+            <button onclick="navigate('free-input')" class="hover:text-cinnabar transition-colors text-ink">自由輸入</button>
+        </nav>
+    </header>
+
+    <!-- 主內容區（虛擬路由切換） -->
+    <main class="flex-grow">
+        
+        <!-- ================= PAGE 1: LANDING PAGE ================= -->
+        <section id="page-landing" class="ink-fade-in py-12 px-6 md:px-12 max-w-7xl mx-auto">
+            <!-- Hero 主視覺區 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-8">
+                <div class="lg:col-span-7 space-y-6">
+                    <span class="inline-block bg-[#E8D8B8] text-ink px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                        一場跨越媒介與時代的語言交織
+                    </span>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold serif-title leading-tight tracking-wide text-ink">
+                        一句話，看見<br>
+                        <span class="text-cinnabar relative inline-block">
+                            語氣背後
+                            <span class="absolute left-0 bottom-0 w-full h-[6px] bg-gold/30"></span>
+                        </span> 的文化。
+                    </h2>
+                    <p class="text-base md:text-lg text-ink-light leading-relaxed max-w-xl">
+                        輸入一句日常語句，讓生成式 AI 帶你穿梭於古典文言、長輩溫情、台式口語等多種語境語境，探索語言、媒介與時代文化的微妙激盪。
+                    </p>
+                    
+                    <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                        <button onclick="navigate('quick-demo')" class="bg-cinnabar hover:bg-cinnabar-hover text-xuan px-8 py-4 rounded-xl text-base font-semibold tracking-wider transition-all duration-300 transform hover:-translate-y-1 shadow-md flex items-center justify-center">
+                            <i class="fa-solid fa-play mr-2"></i> 進入快速體驗
+                        </button>
+                        <button onclick="navigate('free-input')" class="border border-pine text-pine hover:bg-xuan-dark/30 px-8 py-4 rounded-xl text-base font-semibold tracking-wider transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+                            <i class="fa-solid fa-keyboard mr-2"></i> 自由輸入一句話
+                        </button>
+                    </div>
+
+                    <!-- 快速展示簡化標籤 -->
+                    <div class="pt-6 flex flex-wrap items-center gap-2 text-xs text-ink-light">
+                        <span class="font-bold">支援語氣：</span>
+                        <span class="bg-xuan px-2 py-1 rounded border border-xuan-dark/50">古典文言風</span>
+                        <span class="bg-xuan px-2 py-1 rounded border border-xuan-dark/50">校園匿名社群風</span>
+                        <span class="bg-xuan px-2 py-1 rounded border border-xuan-dark/50">中英混用風</span>
+                        <span class="bg-xuan px-2 py-1 rounded border border-xuan-dark/50">長輩風</span>
+                        <span class="bg-xuan px-2 py-1 rounded border border-xuan-dark/50">台式口語風</span>
+                        <span class="bg-xuan px-2 py-1 rounded border border-xuan-dark/50">賽博龐克風</span>
+                    </div>
+                </div>
+
+                <!-- 右側主視覺裝飾 -->
+                <div class="lg:col-span-5 flex justify-center relative">
+                    <div class="absolute -top-10 -left-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl"></div>
+                    <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-cinnabar/5 rounded-full blur-3xl"></div>
+                    
+                    <div class="xuan-card w-full max-w-md rounded-2xl p-6 md:p-8 border border-xuan-dark relative overflow-hidden">
+                        <!-- 古代卷軸裝飾角 -->
+                        <div class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-gold/40"></div>
+                        <div class="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-gold/40"></div>
+                        <div class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-gold/40"></div>
+                        <div class="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-gold/40"></div>
+                        
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="ancient-stamp">時空對白</div>
+                            <span class="text-xs text-ink-light font-serif">編號：NTHUISS</span>
+                        </div>
+
+                        <!-- 示範對話流 -->
+                        <div class="space-y-6 text-sm relative">
+                            <div class="border-l-2 border-gold/30 pl-4 py-1">
+                                <span class="text-[11px] uppercase tracking-wider text-ink-light block font-serif">原句 (現代日常)</span>
+                                <p class="font-medium mt-1">「我今天很累，不想上班。」</p>
+                            </div>
+                            
+                            <div class="border-l-2 border-[#6B4F3A]/40 pl-4 py-1">
+                                <span class="text-[11px] uppercase tracking-wider text-[#6B4F3A] block font-serif">古典文言風</span>
+                                <p class="text-[#6B4F3A] font-semibold mt-1 serif-title text-base">「今日疲甚，實不欲赴職。」</p>
+                            </div>
+
+                            <div class="border-l-2 border-[#4F7A9A]/40 pl-4 py-1">
+                                <span class="text-[11px] uppercase tracking-wider text-[#4F7A9A] block font-serif">校園匿名社群風</span>
+                                <p class="text-[#4F7A9A] font-semibold mt-1">「有沒有人也會這樣，累到完全不想上班😭。」</p>
+                            </div>
+
+                            <div class="border-l-2 border-[#4F7A5B]/40 pl-4 py-1">
+                                <span class="text-[11px] uppercase tracking-wider text-[#4F7A5B] block font-serif">長輩風</span>
+                                <p class="text-[#4F7A5B] font-semibold mt-1">「多喝溫開水，平安順心，健康最重要。」</p>
+                            </div>
+                        </div>
+
+                        <div class="absolute bottom-4 right-6 w-14 h-14 border-4 border-cinnabar/20 rounded-full flex items-center justify-center text-cinnabar/20 font-bold text-xs transform rotate-12 serif-title pointer-events-none">
+                            時空漫遊
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 兩種模式入口卡片 -->
+            <div class="py-16">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h3 class="text-2xl md:text-3xl font-extrabold serif-title text-ink">選擇你的探險旅程</h3>
+                    <p class="text-sm text-ink-light mt-2">無論是想欣賞經典的文化語意，還是即興考驗 AI 的臨場應變，我們皆能滿足您的需求。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 卡片 1 -->
+                    <div class="xuan-card rounded-2xl p-8 hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-cinnabar/10 text-cinnabar rounded-xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <h4 class="text-xl font-bold serif-title text-ink">快速體驗模式</h4>
+                            <p class="text-sm text-ink-light mt-3 leading-relaxed">
+                                精選 4 個承載時代情緒的代表性句子。適合初次遊玩者，配備專屬<b>圖像語境</b>配對、與深度文化意涵分析。
+                            </p>
+                            <div class="mt-6 flex flex-wrap gap-2">
+                                <span class="text-xs bg-[#E8D8B8]/40 text-ink px-2 py-1 rounded">圖像搭配</span>
+                                <span class="text-xs bg-[#E8D8B8]/40 text-ink px-2 py-1 rounded">文化解讀</span>
+                            </div>
+                        </div>
+                        <button onclick="navigate('quick-demo')" class="mt-8 w-full bg-cinnabar hover:bg-cinnabar-hover text-xuan py-3 rounded-xl text-sm font-semibold tracking-wider transition-all">
+                            進入快速體驗
+                        </button>
+                    </div>
+
+                    <!-- 卡片 2 -->
+                    <div class="xuan-card rounded-2xl p-8 hover:shadow-lg transition-all group flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-pine/10 text-pine rounded-xl flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-keyboard"></i>
+                            </div>
+                            <h4 class="text-xl font-bold serif-title text-ink">自由輸入模式</h4>
+                            <p class="text-sm text-ink-light mt-3 leading-relaxed">
+                                考驗 AI 的真實文字轉譯極限！您可以輸入任何日常對話或現代流行語，讓 AI 在呼吸之間即時轉換並剖析背後的深層社會文化脈絡。
+                            </p>
+                            <div class="mt-6 flex flex-wrap gap-2">
+                                <span class="text-xs bg-pine/10 text-pine px-2 py-1 rounded">自由探索</span>
+                                <span class="text-xs bg-pine/10 text-pine px-2 py-1 rounded">即時生成</span>
+                            </div>
+                        </div>
+                        <button onclick="navigate('free-input')" class="mt-8 w-full bg-pine hover:bg-[#32473a] text-xuan py-3 rounded-xl text-sm font-semibold tracking-wider transition-all">
+                            開始自由輸入
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 人文觀點說明區 -->
+            <div class="border-t border-[#D8C7A3] pt-12 pb-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="space-y-3">
+                        <div class="text-cinnabar font-bold text-lg serif-title">01 / 語言作為媒介</div>
+                        <p class="text-xs text-ink-light leading-relaxed">
+                            同樣的情感，在不同的載體（如竹簡書信、家庭群組、社群媒體）中會產生截然不同的物理節奏。媒介不只是傳遞內容，媒介本身就是內容的一部分。
+                        </p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="text-cinnabar font-bold text-lg serif-title">02 / 社群文化的折射</div>
+                        <p class="text-xs text-ink-light leading-relaxed">
+                            校園匿名社群以個人共鳴化解迷惘；中英混用體現跨國職場文化；台式口語風充滿生命張力。每一種語氣都是該場景的群體肖像。
+                        </p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="text-cinnabar font-bold text-lg serif-title">03 / AI 文化偏誤的反思</div>
+                        <p class="text-xs text-ink-light leading-relaxed">
+                            AI生成風格本質上是基於網路語料的模型模擬，難免隱含刻板印象。本系統希望帶給您趣味，也帶給您對AI語言框架的獨立思辨能力。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 2: QUICK DEMO PAGE ================= -->
+        <section id="page-quick-demo" class="ink-fade-in py-12 px-6 md:px-12 max-w-6xl mx-auto hidden">
+            <!-- 麵包屑導航 -->
+            <div class="text-xs text-ink-light mb-6 flex items-center space-x-2">
+                <span class="hover:text-cinnabar cursor-pointer" onclick="navigate('landing')">首頁</span>
+                <span>/</span>
+                <span class="font-bold text-ink">快速體驗模式</span>
+            </div>
+
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold serif-title text-ink">選擇一句情緒，開啟語氣穿越</h2>
+                <p class="text-sm text-ink-light mt-2">精選 4 句代表工作疲憊、躺平文化、小確幸與心靈破防的現代心聲。</p>
+            </div>
+
+            <!-- 1. 範例句選擇區 -->
+            <div class="space-y-4 mb-10">
+                <h3 class="text-xs uppercase tracking-wider font-bold text-ink-light"><i class="fa-solid fa-list-check mr-1 text-gold"></i> 第一步：請選取一句對白</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3" id="quick-sentences-container">
+                    <!-- 範例句由 JS 動態生成 (只有 4 句) -->
+                </div>
+            </div>
+
+            <!-- 2. 語氣選擇區 -->
+            <div class="space-y-4 mb-10">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs uppercase tracking-wider font-bold text-ink-light"><i class="fa-solid fa-wand-magic mr-1 text-gold"></i> 第二步：選擇想要穿越的語氣 (可多選)</h3>
+                    <button onclick="selectAllTones(true)" class="text-xs text-pine hover:underline">全選</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3" id="quick-tones-container">
+                    <!-- 語氣卡片由 JS 動態生成 -->
+                </div>
+            </div>
+
+            <!-- 3. 操作與按鈕 -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 py-6 border-y border-[#D8C7A3] mb-12">
+                <button id="btn-start-translation-quick" onclick="startTranslationQuick()" class="w-full sm:w-auto bg-cinnabar hover:bg-cinnabar-hover text-xuan px-10 py-4 rounded-xl text-base font-bold tracking-wider transition-all transform hover:-translate-y-0.5 shadow-md flex items-center justify-center">
+                    <i class="fa-solid fa-feather mr-2"></i> 開始翻譯
+                </button>
+                <button onclick="resetQuickDemo()" class="w-full sm:w-auto border border-[#C6A15B] text-[#6B4F3A] hover:bg-xuan px-8 py-4 rounded-xl text-sm font-semibold transition-all">
+                    重置選擇
+                </button>
+            </div>
+
+            <!-- 4. Loading 狀態 -->
+            <div id="loader-quick" class="hidden text-center py-16 space-y-4">
+                <div class="flex justify-center">
+                    <div class="ink-loader"></div>
+                </div>
+                <p id="loader-text-quick" class="text-sm font-serif italic text-ink-light">AI 正在翻閱時代語氣辭典...</p>
+            </div>
+
+            <!-- 5. 翻譯與解讀結果區 (JS 渲染) -->
+            <div id="results-area-quick" class="space-y-12 hidden">
+                <!-- 翻譯成果區（新增 scroll-mt-24 確保滾動對齊，不被固定導覽列遮擋） -->
+                <div class="scroll-mt-24" id="quick-results-title-container">
+                    <h3 id="quick-results-title" class="text-lg font-bold serif-title text-ink mb-6 flex items-center scroll-mt-24">
+                        <span class="w-2 h-2 bg-cinnabar rounded-full mr-2"></span> 翻譯成果
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="translated-cards-quick">
+                        <!-- 結果卡片由 JS 生成 -->
+                    </div>
+                </div>
+
+                <!-- 深度文化解讀與圖像對應分析 -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8 border-t border-[#D8C7A3]">
+                    <!-- 左：圖像文化配對分析 -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="xuan-card rounded-xl p-6 border border-xuan-dark">
+                            <h4 class="text-sm font-bold text-ink-light uppercase tracking-wider mb-4"><i class="fa-solid fa-image mr-1 text-cinnabar"></i> 圖像語境配對</h4>
+                            
+                            <!-- 梗圖配對 -->
+                            <div class="bg-white/80 rounded-lg border border-xuan-dark flex justify-center items-center relative overflow-hidden" id="meme-svg-container">
+                                <img id="meme-img" src="" alt="梗圖" class="w-full h-auto object-contain block" />
+                            </div>
+                            
+                            <div class="mt-4">
+                                <span id="quick-meme-badge" class="inline-block bg-cinnabar text-xuan text-xs font-bold px-2 py-0.5 rounded-sm">工作壓力標籤</span>
+                                <p id="quick-meme-desc" class="text-xs text-ink-light mt-2 leading-relaxed">
+                                    這款視覺意象折射了語言如何將個人感受，轉化為在特定文化背景下可被共同理解與包容的視覺象徵。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右：深度文化洞察 -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="bg-[#FBF7ED] border-2 border-gold rounded-xl p-8 shadow-sm relative">
+                            <div class="absolute -top-3 -right-3 w-10 h-10 border-t-2 border-r-2 border-cinnabar"></div>
+                            <h4 class="text-xl font-bold serif-title text-ink flex items-center mb-4">
+                                <i class="fa-solid fa-graduation-cap mr-2 text-gold"></i> AI 的文化洞察
+                            </h4>
+                            <p id="quick-culture-insight" class="text-sm text-ink leading-relaxed font-light"></p>
+                            <ul id="quick-tone-insights" class="mt-4 space-y-2 hidden"></ul>
+                            
+                            <!-- 警示提醒 -->
+                            <div class="mt-6 p-3 bg-xuan-dark/30 rounded border border-xuan-dark text-[11px] text-ink-light leading-relaxed">
+                                <span class="font-bold text-cinnabar"><i class="fa-solid fa-triangle-exclamation"></i> 提示：</span>
+                                AI 生成語氣可能存在侷限性，不應視為絕對客觀事實，請保持獨立批判性思考。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 3: FREE INPUT PAGE ================= -->
+        <section id="page-free-input" class="ink-fade-in py-12 px-6 md:px-12 max-w-6xl mx-auto hidden">
+            <!-- 麵包屑導航 -->
+            <div class="text-xs text-ink-light mb-6 flex items-center space-x-2">
+                <span class="hover:text-cinnabar cursor-pointer" onclick="navigate('landing')">首頁</span>
+                <span>/</span>
+                <span class="font-bold text-ink">自由輸入模式</span>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-extrabold serif-title text-ink">語料任由你揮灑，讓 AI 轉譯</h2>
+                <p class="text-sm text-ink-light mt-2">任意鍵入任何生活對白，體驗即時生成轉譯與深度文化分析。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 左：輸入面板 -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="xuan-card rounded-2xl p-6 border border-xuan-dark">
+                        <div class="flex justify-between items-center mb-3">
+                            <label for="user-custom-input" class="text-xs uppercase tracking-wider font-bold text-ink-light">
+                                <i class="fa-solid fa-pen-fancy mr-1 text-cinnabar"></i> 輸入你想翻譯的一句話
+                            </label>
+                            <span id="char-counter" class="text-[11px] text-ink-light">0 / 80</span>
+                        </div>
+                        <div class="relative">
+                            <textarea id="user-custom-input" oninput="updateCharCount()" maxlength="80" rows="4" 
+                                placeholder="例：為什麼現在的東西都這麼貴？！" 
+                                class="w-full bg-[#FAF6EA] border border-xuan-dark/80 rounded-xl p-4 text-sm focus:outline-none focus:border-cinnabar transition-all resize-none text-ink leading-relaxed"></textarea>
+                            <button onclick="clearCustomInput()" class="absolute right-3 bottom-3 text-xs text-ink-light hover:text-cinnabar transition-colors" title="清除文字">
+                                <i class="fa-solid fa-trash-can"></i> 清除
+                            </button>
+                        </div>
+                        
+                        <!-- 安全篩選警告 -->
+                        <div id="safety-warning" class="hidden mt-2 p-2 bg-rose-100 text-rose-800 rounded text-xs">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> 請避免輸入人身攻擊或具有歧視性的語言，使翻譯專注於文化與媒介風格。
+                        </div>
+
+                        <!-- 語氣多選區 -->
+                        <div class="mt-6 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs uppercase tracking-wider font-bold text-ink-light">選擇想轉換的語氣 (最多選 3 種)</span>
+                                <span id="free-tone-limit" class="text-[10px] text-cinnabar font-bold"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2" id="free-tones-container">
+                                <!-- 由 JS 動態生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 操作按鈕 -->
+                        <div class="mt-6 pt-4 border-t border-xuan-dark flex gap-3">
+                            <button id="btn-start-translation-free" onclick="startTranslationFree()" class="flex-1 bg-cinnabar hover:bg-cinnabar-hover text-xuan py-3 rounded-xl text-sm font-bold tracking-wider transition-all transform hover:-translate-y-0.5 shadow-md flex items-center justify-center">
+                                <i class="fa-solid fa-compass mr-1"></i> 開始翻譯
+                            </button>
+                            <button onclick="resetFreeInput()" class="border border-xuan-dark text-ink hover:bg-xuan-dark/20 px-4 py-3 rounded-xl text-xs transition-all">
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右：結果面板 -->
+                <div class="lg:col-span-7">
+                    <!-- Empty State -->
+                    <div id="empty-state-free" class="xuan-card rounded-2xl p-12 text-center border border-dashed border-xuan-dark flex flex-col items-center justify-center h-full min-h-[350px]">
+                        <div class="w-16 h-16 bg-xuan-dark/30 rounded-full flex items-center justify-center text-ink-light text-2xl mb-4">
+                            <i class="fa-solid fa-feather"></i>
+                        </div>
+                        <h4 class="text-lg font-bold serif-title text-ink">待命翻譯中</h4>
+                        <p class="text-xs text-ink-light max-w-sm mt-2 leading-relaxed">
+                            請在左側輸入您客製化的句子，選取想轉換的語感，隨即展開 AI 的時空媒介跨度模擬！
+                        </p>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loader-free" class="hidden xuan-card rounded-2xl p-12 text-center border border-xuan-dark h-full min-h-[350px] flex flex-col items-center justify-center space-y-4">
+                        <div class="ink-loader"></div>
+                        <p id="loader-text-free" class="text-sm font-serif italic text-ink-light">AI 正在尋找這句話的另一種聲音...</p>
+                    </div>
+
+                    <!-- Result Output -->
+                    <div id="results-area-free" class="hidden space-y-6">
+                        <!-- 轉譯成果標題區（新增 scroll-mt-24 確保滾動對齊） -->
+                        <h3 id="free-results-title" class="text-xs uppercase tracking-wider font-bold text-ink-light scroll-mt-24"><i class="fa-solid fa-square-poll-horizontal mr-1 text-gold"></i> AI 轉譯成果</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="translated-cards-free">
+                            <!-- 結果卡片由 JS 動態生成 -->
+                        </div>
+
+                        <!-- 簡化文化矩陣表 -->
+                        <div class="bg-[#FBF7ED] border border-xuan-dark rounded-xl p-6">
+                            <h4 class="text-sm font-bold serif-title text-ink mb-3"><i class="fa-solid fa-table-list mr-1 text-gold"></i> 媒介語境變遷矩陣</h4>
+                            <div class="overflow-x-auto text-xs">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-xuan-dark/80 text-ink-light bg-xuan-dark/10">
+                                            <th class="p-2 font-semibold">目標語氣</th>
+                                            <th class="p-2 font-semibold">核心情緒處理機制</th>
+                                            <th class="p-2 font-semibold">社會文化脈絡</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="culture-matrix-rows">
+                                        <!-- 表格列由 JS 動態填充 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 洞察 -->
+                        <div class="bg-pine/5 border border-pine/30 rounded-xl p-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-pine text-xuan rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">析</div>
+                                <div class="w-full">
+                                    <h5 class="text-sm font-bold text-pine">自訂語氣文化剖析</h5>
+                                    <p id="free-culture-insight" class="text-xs text-ink-light mt-1 leading-relaxed"></p>
+                                    <ul id="free-tone-insights" class="mt-3 space-y-2 hidden"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-ink text-xuan py-8 px-6 md:px-12 border-t border-gold/20 text-center">
+        <div class="max-w-4xl mx-auto space-y-4">
+            <h4 class="serif-title tracking-widest text-lg text-gold">一句話，看見語氣背後的文化</h4>
+            <p class="text-xs text-xuan-light/60 max-w-xl mx-auto leading-relaxed">
+                本系統為專屬打造之生成式互動原型。設計靈感汲取於古典文化、媒介環境學與當代社會表達，帶領玩家在玩味文字的同時，看見不同語氣背後的文化景深與時代軌跡。
+            </p>
+            <div class="pt-2 text-[10px] text-xuan-light/40">
+                © 2026 AI 時代語氣翻譯機. 所有權利保留。
+            </div>
+        </div>
+    </footer>
+
+    <!-- 全局提示框 (Toast) -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-[#2E2723] text-xuan px-5 py-3 rounded-lg shadow-lg text-xs transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none flex items-center space-x-2">
+        <span id="toast-icon" class="text-gold"><i class="fa-solid fa-circle-check"></i></span>
+        <span id="toast-msg">已成功複製到剪貼簿！</span>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // ------------------ (1) 基礎配置與狀態 ------------------
+        let selectedQuickSentenceId = null;
+        let selectedQuickTones = [];
+        let selectedFreeTones = [];
+
+        // 4 個精選快速體驗句子數據庫
+        const QUICK_SENTENCES = [
+            {
+                id: '1',
+                text: '我今天很累，不想上班',
+                emotion: '工作壓力、勞動情緒',
+                badge: '工作疲憊',
+                memeTag: '工作疲憊'
+            },
+            {
+                id: '2',
+                text: '我只想躺平，但世界不放過我',
+                emotion: '躺平文化、效率社會壓力',
+                badge: '躺平逃避',
+                memeTag: '躺平'
+            },
+            {
+                id: '3',
+                text: '今天喝到好喝的飲料，覺得人生又可以了',
+                emotion: '日常小確幸、情緒修復',
+                badge: '生活療癒',
+                memeTag: '飲料療癒'
+            },
+            {
+                id: '4',
+                text: '我以為我已經沒事了，結果聽到那首歌又破防了',
+                emotion: '音樂記憶、私人情感觸發',
+                badge: '情感記憶',
+                memeTag: '音樂記憶'
+            }
+        ];
+
+        // 6 種高質感特色語氣
+        const TONE_TEMPLATES = [
+            { id: 'classical', name: '古典文言風', icon: 'fa-scroll', color: '#6B4F3A', desc: '含蓄、凝練、節制，轉情緒為典雅敘事書寫感。' },
+            { id: 'anonymous', name: '校園匿名社群風', icon: 'fa-users-viewfinder', color: '#4F7A9A', desc: '口語溫和，常以匿名傾訴「有沒有人也會」引發集體情緒共鳴。' },
+            { id: 'bilingual', name: '中英混用風', icon: 'fa-language', color: '#6A5B8F', desc: '中英文自然融混，體現全球化與都會職場環境的溝通日常。' },
+            { id: 'elder', name: '長輩風', icon: 'fa-heart-circle-bolt', color: '#4F7A5B', desc: '充滿家庭叮嚀，以平安健康、喝水、保重祝福體現代際親情。' },
+            { id: 'colloquial', name: '台式口語風', icon: 'fa-comments', color: '#A66A3F', desc: '口語直接，充滿生命力，重視朋友互動、義氣與直白情緒。' },
+            { id: 'cyberpunk', name: '賽博龐克風', icon: 'fa-microchip', color: '#5B4B8A', desc: '反烏托邦想像，將個人疲憊或情緒連結到資本系統壓力。' }
+        ];
+
+        // 預置備援語料資料庫
+        const PREBUILT_TRANSLATIONS = {
+            '1': { // 我今天很累，不想上班
+                'classical': { text: '今日疲甚，實不欲赴職。', tags: ['含蓄', '節制', '古典書寫'], insight: '文言風以「疲甚」二字含盡重壓，不抱怨卻字字有情，將職場疲憊昇華為節制的書寫美學。' },
+                'anonymous': { text: '有沒有人也會這樣，明明沒做什麼大事，但今天就是累到完全不想上班😭。', tags: ['口語', '共鳴感', '匿名發文'], insight: '「有沒有人也會這樣」是數位時代尋求同溫層的典型召喚，把個人疲憊轉化為集體共鳴的入場券。' },
+                'bilingual': { text: '我今天 energy 真的很 low，完全不想進入上班 mode。', tags: ['都會語境', '職場日常', '自然混用'], insight: 'energy low、上班 mode 是全球化都會工作者的共同語彙，中英混用折射出現代職場的語言身份認同。' },
+                'elder': { text: '今天若覺得疲累，就要多休息，多喝溫開水，工作做不完，健康最重要，平安順心。', tags: ['家庭通訊', '健康提醒', '溫暖關懷'], insight: '長輩風把情緒問題轉向生理照護，疲憊在這裡被接住、被安撫，體現代際關愛最直接的表達方式。' },
+                'colloquial': { text: '今天真的累到不行，讓我休一下是會怎樣？', tags: ['地方口語', '情緒直接', '生命力'], insight: '「是會怎樣」是台灣口語特有的反詰語氣，帶著一絲不服氣的生命力，情緒宣洩毫不拐彎。' },
+                'cyberpunk': { text: '生理電量低於臨界值，拒絕再次登入資本系統。', tags: ['科技社會', '系統批判', '反烏托邦'], insight: '將人體比作耗電裝置、把上班稱為「登入資本系統」，是對現代勞動制度最冷靜也最犀利的批判。' },
+                cultureInsight: '這句話表面上是在抱怨上班，但背後其實反映了現代人對工作節奏的疲憊感。它不是單純的懶惰，而是一種對長時間勞動、情緒消耗與生活被工作佔滿的反應。「不想上班」之所以容易引起共鳴，是因為它把很多人說不出口的職場倦怠，用最直接、最日常的方式說了出來。'
+            },
+            '2': { // 我只想躺平，但世界不放過我
+                'classical': { text: '但思高臥退隱，無奈塵世相逼。', tags: ['隱逸', '身不由己', '留白'], insight: '文言風借「高臥退隱」的古典意象，將現代躺平的渴望賦予了文人避世的歷史厚度。' },
+                'anonymous': { text: '有沒有人也跟我一樣，好想直接躺平，但一想到生活壓力就覺得這世界根本不打算放過我。', tags: ['匿名取暖', '壓力共鳴', '校園社群'], insight: '匿名社群風把「躺平未遂」的兩難說出來，邀請他人一起承認脆弱，在共鳴中找到存在的合理性。' },
+                'bilingual': { text: '我只是想好好躺平一下，結果全世界都在丟新的 task 給我。', tags: ['職場焦慮', '個人邊界', '語言身份'], insight: '「task」一詞讓躺平對抗的對象具體化為職場任務，中英混用精準捕捉了都會工作者的邊界困境。' },
+                'elder': { text: '人生路上難免有累的時候，稍微放慢腳步也是福氣。凡事量力而為，平安順心，健康最重要。', tags: ['代際關懷', '福報健康', '長輩叮嚀'], insight: '長輩風以「放慢腳步也是福氣」合理化休息的需求，用傳統智慧溫柔地為躺平解套。' },
+                'colloquial': { text: '我累了躺一下是犯法喔？整天追著逼我是怎樣，沒在給人面子欸。', tags: ['街頭口語', '情緒外放', '直白'], insight: '台式口語把委屈化為反擊，「沒在給人面子」體現了台灣街頭文化中對個人空間被侵犯的直白抗議。' },
+                'cyberpunk': { text: '試圖中斷超頻加載協定，然而中心矩陣拒絕休眠許可，強制重啟生產力進程。', tags: ['人機博弈', '資本網絡', '硬體焦慮'], insight: '賽博龐克風把躺平描述為被系統拒絕的「休眠請求」，揭示了現代生產力文化如何像程式一樣強制運作個體。' },
+                cultureInsight: '這句話呈現的是一種「想暫停卻無法暫停」的現代處境。躺平不一定代表放棄，而是人在高壓、競爭與不斷被要求進步的環境中，對效率社會產生的疲憊回應。「世界不放過我」則帶出一種幽默的無力感：即使只是想休息，現實仍然會繼續推著人往前走。'
+            },
+            '3': { // 今天喝到好喝的飲料，覺得人生又可以了
+                'classical': { text: '今日偶得佳茗，甘露沁脾，頓覺吾生猶可期。', tags: ['典雅', '沁人心脾', '自適'], insight: '文言風以「偶得佳茗」將一杯飲料提升為人生際遇，「吾生猶可期」六字道盡了小確幸的修復力量。' },
+                'anonymous': { text: '今天點了一杯超好喝的飲料，喝下去的第一口真的覺得被拯救了，人生好像又可以撐下去了！', tags: ['小確幸', '日常救贖', '校園生活'], insight: '匿名社群風把飲料的好喝渲染成「被拯救」的儀式感，折射出當代年輕人從微小事物中尋找日常動力的心理需求。' },
+                'bilingual': { text: '今天這杯飲料真的是 best drink ever，突然覺得 life is not that bad you know?', tags: ['都會日常', '微小快樂', '工作模式'], insight: '「life is not that bad」以英語輕描淡寫，卻說出了都會打工人最真實的心聲，語氣輕鬆卻餘韻十足。' },
+                'elder': { text: '工作辛苦了！喝杯甜甜的，心情也會變好喔。不過冰的水不要喝太多，對氣管不好，祝你今天順心快樂。', tags: ['叮嚀保重', '長輩日常', '平安喜樂'], insight: '長輩風在分享喜悅的同時附上健康叮嚀，是典型的代際溝通模式——快樂要分享，但關心永遠排第一。' },
+                'colloquial': { text: '這杯飲料真的有夠讚，喝下去整個人直接爽歪，人生又有動力了啦。', tags: ['直率痛快', '地方口語', '生活動力'], insight: '「爽歪」是台灣口語對極致滿足感的精準描述，直接、有力，把小確幸的爽感毫無保留地說了出來。' },
+                'cyberpunk': { text: '成功注射高純度化學興奮劑（高糖分複合液），系統多巴胺水平暫時重置穩定。', tags: ['生理代碼', '神經調劑', '機能修復'], insight: '賽博龐克風把喝飲料解讀為神經系統的「多巴胺微調」，在冷靜的科技語言中，反諷了現代人對即時情緒修復的高度依賴。' },
+                cultureInsight: '這句話反映了現代人的「小確幸」文化：生活不一定真的變輕鬆了，但一杯好喝的飲料可以短暫修復情緒，讓人重新感覺自己還能撐下去。它也說明日常消費不只是滿足口腹之欲，而常常承載著安慰、獎勵與自我照顧的功能。這種微小幸福之所以重要，是因為它讓人在壓力生活中找到一個可以喘氣的片刻。'
+            },
+            '4': { // 我以為我已經沒事了，結果聽到那首歌又破防了
+                'classical': { text: '自謂此情已逝，奈何夜半聞歌，熱淚盈眶，終不能自已。', tags: ['情不自已', '詩意留白', '往事'], insight: '文言風以「終不能自已」五字道盡情感防線崩潰的瞬間，古典的剋制語氣反而讓情緒的重量更加深沉。' },
+                'anonymous': { text: '我以為我已經走出來、沒事了，結果剛剛隨機播放到那首歌，旋律一出來眼淚直接掉下來，真的瞬間破防😭。', tags: ['情感共感', '脆弱坦露', '匿名社群'], insight: '匿名社群風把「破防」的瞬間細節化描述，讓讀者彷彿身歷其境，在脆弱的坦露中創造強烈的情感共振。' },
+                'bilingual': { text: '我以為我已經 move on 了，結果那首歌一出來，整個 emotional damage', tags: ['都會情感', '私人經驗', '日常抒發'], insight: '「emotional damage」以英語說出中文難以輕描的情緒衝擊，語句刻意不收尾，留下破防後的無言餘震。' },
+                'elder': { text: '孩子，音樂能勾起回憶，想哭就哭出來，沒事的。哭過之後擦乾眼淚，明天又是美好的一天，加油！', tags: ['溫柔傾聽', '代際同理', '關心鼓勵'], insight: '長輩風以「想哭就哭出來」給予破防的正當性，再以明天的美好收尾，是跨越年齡隔閡的溫柔陪伴。' },
+                'colloquial': { text: '我以為我早就看開了，結果那首歌播出來，眼淚直接噴出來，真的是有夠逼人。', tags: ['直接直率', '街頭情感', '不裝假面'], insight: '台式口語不迴避情緒崩潰，「眼淚直接噴出來」的誇張表達反而是種誠實，在直白中卸下了維持形象的壓力。' },
+                'cyberpunk': { text: '偵測到特定音訊波形觸發情感分區溢位，防火牆機制失效，記憶硬體發生瞬態故障。', tags: ['故障溢位', '情感機制', '底層防線'], insight: '賽博龐克風把破防隱喻為防火牆失效與記憶硬體故障，在科技冷語中精準點出情感防禦的脆弱本質。' },
+                cultureInsight: '這句話呈現了記憶與情感之間的連結。有些情緒看似已經過去，卻會被一首歌、一段旋律或某個熟悉的片刻重新喚起。「破防」這個詞也很貼近當代網路語言，它把情緒突然失守的狀態說得既誇張又精準。這句話反映了現代人如何用幽默的方式描述脆弱，也透露出記憶並不會真的消失，只是暫時被收起來。'
+            }
+        };
+
+        // 圖像 SVG 資料庫
+        const MEME_SVGS = {
+            '工作疲憊': `
+                <svg viewBox="0 0 100 100" class="w-24 h-24 text-ink opacity-80" fill="currentColor">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2,2" />
+                    <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="1" />
+                    <line x1="50" y1="50" x2="50" y2="30" stroke="currentColor" stroke-width="3" />
+                    <line x1="50" y1="50" x2="70" y2="50" stroke="currentColor" stroke-width="2" />
+                    <path d="M 30,70 Q 50,75 70,70 L 65,80 Q 50,82 35,80 Z" fill="#A64036" />
+                    <text x="50" y="65" text-anchor="middle" font-family="Noto Serif TC" font-weight="900" font-size="11" fill="#FAF6EA">疲甚</text>
+                </svg>
+            `,
+            '躺平': `
+                <svg viewBox="0 0 100 100" class="w-24 h-24 text-ink opacity-80" fill="currentColor">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <path d="M 15,25 Q 35,15 55,25 Q 75,20 85,35" stroke="currentColor" stroke-width="1.5" fill="none" />
+                    <line x1="30" y1="70" x2="70" y2="70" stroke="currentColor" stroke-width="2" />
+                    <circle cx="35" cy="63" r="5" fill="#A64036" />
+                    <path d="M 35,68 Q 45,70 55,68" stroke="currentColor" stroke-width="2" fill="none" />
+                    <text x="45" y="50" font-family="serif" font-size="10">z</text>
+                    <text x="52" y="42" font-family="serif" font-size="12" fill="#A64036">z</text>
+                    <text x="50" y="90" text-anchor="middle" font-family="Noto Serif TC" font-size="9">臥野避世</text>
+                </svg>
+            `,
+            '飲料療癒': `
+                <svg viewBox="0 0 100 100" class="w-24 h-24 text-ink opacity-80" fill="currentColor">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <rect x="38" y="35" width="24" height="40" rx="3" fill="none" stroke="currentColor" stroke-width="2" />
+                    <line x1="50" y1="30" x2="54" y2="65" stroke="currentColor" stroke-width="2" />
+                    <path d="M 25,30 Q 32,27 30,35 Q 20,38 25,30" fill="#A64036" />
+                    <path d="M 75,65 Q 82,62 80,70 Q 70,73 75,65" fill="#A64036" />
+                    <text x="50" y="93" text-anchor="middle" font-family="Noto Serif TC" font-size="9">甘露怡情</text>
+                </svg>
+            `,
+            '音樂記憶': `
+                <svg viewBox="0 0 100 100" class="w-24 h-24 text-ink opacity-80" fill="currentColor">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" />
+                    <line x1="25" y1="35" x2="75" y2="35" stroke="currentColor" stroke-width="1" />
+                    <line x1="25" y1="45" x2="75" y2="45" stroke="currentColor" stroke-width="1.2" />
+                    <line x1="25" y1="55" x2="75" y2="55" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2,2" />
+                    <path d="M 50,45 Q 40,30 50,20 Q 60,30 50,45" fill="#A64036" />
+                    <text x="50" y="90" text-anchor="middle" font-family="Noto Serif TC" font-size="9">歌動心弦</text>
+                </svg>
+            `
+        };
+
+
+        // ------------------ (2) 初始化與 DOM Ready ------------------
+        window.onload = function () {
+            initQuickSentences();
+            initQuickTones();
+            initFreeTones();
+            navigate('landing');
+        };
+
+        // ------------------ (3) 核心虛擬導航 ------------------
+        function navigate(pageId) {
+            document.getElementById('page-landing').classList.add('hidden');
+            document.getElementById('page-quick-demo').classList.add('hidden');
+            document.getElementById('page-free-input').classList.add('hidden');
+
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // ------------------ (4) 快速體驗模式渲染 ------------------
+        function initQuickSentences() {
+            const container = document.getElementById('quick-sentences-container');
+            container.innerHTML = '';
+            
+            QUICK_SENTENCES.forEach(item => {
+                const btn = document.createElement('button');
+                btn.id = `quick-sent-${item.id}`;
+                btn.onclick = () => selectQuickSentence(item.id);
+                btn.className = `xuan-card p-4 rounded-xl text-left border transition-all duration-300 flex flex-col justify-between hover:shadow-md cursor-pointer h-full min-h-[120px]`;
+                
+                btn.innerHTML = `
+                    <p class="text-sm font-semibold text-ink line-clamp-3">「${item.text}」</p>
+                    <div class="mt-3 flex items-center justify-between">
+                        <span class="text-[10px] bg-xuan-dark/50 text-ink px-2 py-0.5 rounded">${item.badge}</span>
+                        <span class="text-xs text-gold check-mark hidden"><i class="fa-solid fa-circle-check"></i></span>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function initQuickTones() {
+            const container = document.getElementById('quick-tones-container');
+            container.innerHTML = '';
+            
+            TONE_TEMPLATES.forEach(item => {
+                const btn = document.createElement('button');
+                btn.id = `quick-tone-${item.id}`;
+                btn.onclick = () => toggleQuickTone(item.id);
+                btn.className = `xuan-card p-3 rounded-xl text-left border transition-all duration-300 flex flex-col items-start justify-between cursor-pointer h-full min-h-[110px]`;
+                
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-2 w-full">
+                        <span class="text-xs w-6 h-6 rounded-full flex items-center justify-center" style="background-color: ${item.color}20; color: ${item.color}">
+                            <i class="fa-solid ${item.icon}"></i>
+                        </span>
+                        <span class="text-xs font-bold text-ink">${item.name}</span>
+                    </div>
+                    <p class="text-[10px] text-ink-light mt-2 line-clamp-2 leading-relaxed">${item.desc}</p>
+                    <div class="w-full flex justify-end mt-2">
+                        <span class="text-xs text-cinnabar select-indicator hidden"><i class="fa-solid fa-square-check"></i></span>
+                        <span class="text-xs text-ink-light select-placeholder"><i class="fa-regular fa-square"></i></span>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectQuickSentence(id) {
+            selectedQuickSentenceId = id;
+            
+            QUICK_SENTENCES.forEach(item => {
+                const btn = document.getElementById(`quick-sent-${item.id}`);
+                const mark = btn.querySelector('.check-mark');
+                if (item.id === id) {
+                    btn.classList.add('border-cinnabar', 'bg-xuan');
+                    btn.style.borderColor = '#A64036';
+                    mark.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('border-cinnabar', 'bg-xuan');
+                    btn.style.borderColor = '#E8D8B8';
+                    mark.classList.add('hidden');
+                }
+            });
+        }
+
+        function toggleQuickTone(id) {
+            const index = selectedQuickTones.indexOf(id);
+            if (index > -1) {
+                selectedQuickTones.splice(index, 1);
+            } else {
+                selectedQuickTones.push(id);
+            }
+            updateQuickTonesUI();
+        }
+
+        // 全選功能修正為 6 種語氣
+        function selectAllTones(isQuick) {
+            if (isQuick) {
+                selectedQuickTones = TONE_TEMPLATES.map(t => t.id);
+                updateQuickTonesUI();
+            }
+        }
+
+        function updateQuickTonesUI() {
+            TONE_TEMPLATES.forEach(item => {
+                const btn = document.getElementById(`quick-tone-${item.id}`);
+                const activeIndicator = btn.querySelector('.select-indicator');
+                const placeholder = btn.querySelector('.select-placeholder');
+                
+                if (selectedQuickTones.includes(item.id)) {
+                    btn.classList.add('border-cinnabar', 'bg-xuan');
+                    btn.style.borderColor = '#A64036';
+                    activeIndicator.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                } else {
+                    btn.classList.remove('border-cinnabar', 'bg-xuan');
+                    btn.style.borderColor = '#E8D8B8';
+                    activeIndicator.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                }
+            });
+        }
+
+        function resetQuickDemo() {
+            selectedQuickSentenceId = null;
+            selectedQuickTones = [];
+            
+            initQuickSentences();
+            initQuickTones();
+            document.getElementById('results-area-quick').classList.add('hidden');
+            document.getElementById('loader-quick').classList.add('hidden');
+        }
+
+
+        // ------------------ (5) 自由輸入模式渲染 ------------------
+        function initFreeTones() {
+            const container = document.getElementById('free-tones-container');
+            container.innerHTML = '';
+            
+            TONE_TEMPLATES.forEach(item => {
+                const btn = document.createElement('button');
+                btn.id = `free-tone-${item.id}`;
+                btn.onclick = () => toggleFreeTone(item.id);
+                btn.className = `xuan-card p-3 rounded-xl text-left border transition-all duration-300 flex items-center justify-between cursor-pointer`;
+                
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs w-6 h-6 rounded-full flex items-center justify-center" style="background-color: ${item.color}20; color: ${item.color}">
+                            <i class="fa-solid ${item.icon}"></i>
+                        </span>
+                        <span class="text-xs font-bold text-ink">${item.name}</span>
+                    </div>
+                    <span class="text-xs text-cinnabar select-indicator-free hidden"><i class="fa-solid fa-square-check"></i></span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function toggleFreeTone(id) {
+            const index = selectedFreeTones.indexOf(id);
+            if (index > -1) {
+                selectedFreeTones.splice(index, 1);
+            } else {
+                if (selectedFreeTones.length >= 3) {
+                    showToast('一次最多選擇 3 種語氣，以便獲得最清晰的轉譯對比。', 'warning');
+                    return;
+                }
+                selectedFreeTones.push(id);
+            }
+            updateFreeTonesUI();
+        }
+
+        function updateFreeTonesUI() {
+            const limitText = document.getElementById('free-tone-limit');
+            limitText.innerText = `(${selectedFreeTones.length} / 3)`;
+
+            TONE_TEMPLATES.forEach(item => {
+                const btn = document.getElementById(`free-tone-${item.id}`);
+                const activeIndicator = btn.querySelector('.select-indicator-free');
+                
+                if (selectedFreeTones.includes(item.id)) {
+                    btn.classList.add('border-cinnabar', 'bg-xuan');
+                    btn.style.borderColor = '#A64036';
+                    activeIndicator.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('border-cinnabar', 'bg-xuan');
+                    btn.style.borderColor = '#E8D8B8';
+                    activeIndicator.classList.add('hidden');
+                }
+            });
+        }
+
+        function updateCharCount() {
+            const input = document.getElementById('user-custom-input');
+            const counter = document.getElementById('char-counter');
+            const warning = document.getElementById('safety-warning');
+            
+            const len = input.value.length;
+            counter.innerText = `${len} / 80`;
+
+            if (len > 0) {
+                const unsafeWords = ['垃圾', '去死', '智障', '賤', '白癡'];
+                const hasUnsafe = unsafeWords.some(w => input.value.includes(w));
+                if (hasUnsafe) {
+                    warning.classList.remove('hidden');
+                } else {
+                    warning.classList.add('hidden');
+                }
+            } else {
+                warning.classList.add('hidden');
+            }
+        }
+
+        function clearCustomInput() {
+            document.getElementById('user-custom-input').value = '';
+            updateCharCount();
+        }
+
+        function resetFreeInput() {
+            clearCustomInput();
+            selectedFreeTones = [];
+            updateFreeTonesUI();
+            
+            document.getElementById('empty-state-free').classList.remove('hidden');
+            document.getElementById('results-area-free').classList.add('hidden');
+            document.getElementById('loader-free').classList.add('hidden');
+        }
+
+
+        // ------------------ (6) 翻譯啟動 - 快速體驗模式 ------------------
+        async function startTranslationQuick() {
+            if (!selectedQuickSentenceId) {
+                showToast('請先選取一個對白句子！', 'warning');
+                return;
+            }
+            if (selectedQuickTones.length === 0) {
+                showToast('請至少選擇一種轉換語氣！', 'warning');
+                return;
+            }
+
+            const sentenceObj = QUICK_SENTENCES.find(s => s.id === selectedQuickSentenceId);
+            
+            document.getElementById('results-area-quick').classList.add('hidden');
+            document.getElementById('loader-quick').classList.remove('hidden');
+            
+            const loaders = [
+                'AI 正在翻閱古典文言詞典...',
+                '正在構建校園匿名社群的共鳴軌跡...',
+                '都會職場中英混用語境同步解碼中...',
+                '家庭溫情暖流正在注入文字...',
+                '賽博龐克伺服器底層反叛邏輯運行中...'
+            ];
+            let step = 0;
+            const loaderText = document.getElementById('loader-text-quick');
+            const interval = setInterval(() => {
+                loaderText.innerText = loaders[step % loaders.length];
+                step++;
+            }, 1000);
+
+            try {
+                const results = simulatePrebuiltTranslation(selectedQuickSentenceId, selectedQuickTones);
+                
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                renderQuickResults(results, sentenceObj);
+
+            } catch (err) {
+                console.error(err);
+                showToast('翻譯發生微小阻礙，已為您重載精美本地語料庫！', 'info');
+                const fallbackResults = simulatePrebuiltTranslation(selectedQuickSentenceId, selectedQuickTones);
+                renderQuickResults(fallbackResults, sentenceObj);
+            } finally {
+                clearInterval(interval);
+                document.getElementById('loader-quick').classList.add('hidden');
+            }
+        }
+
+        function renderQuickResults(data, sentenceObj) {
+            const resultsArea = document.getElementById('results-area-quick');
+            const cardContainer = document.getElementById('translated-cards-quick');
+            cardContainer.innerHTML = '';
+
+            data.translations.forEach(t => {
+                const toneConfig = TONE_TEMPLATES.find(temp => temp.name === t.style || temp.id === t.style);
+                const color = toneConfig ? toneConfig.color : '#2E2723';
+                const icon = toneConfig ? toneConfig.icon : 'fa-comment';
+                
+                const card = document.createElement('div');
+                card.className = 'xuan-card rounded-xl p-5 border relative overflow-hidden group hover:shadow-md transition-all';
+                card.style.borderLeft = `5px solid ${color}`;
+                
+                let tagsHtml = '';
+                t.tags.forEach(tg => {
+                    tagsHtml += `<span class="bg-xuan-dark/30 text-ink text-[10px] px-2 py-0.5 rounded mr-1">#${tg}</span>`;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold flex items-center" style="color: ${color}">
+                            <i class="fa-solid ${icon} mr-1.5"></i> ${toneConfig ? toneConfig.name : t.style}
+                        </span>
+                        <div class="flex space-x-1">
+                            <button onclick="copyToClipboard('${t.text}')" class="text-xs text-ink-light hover:text-cinnabar p-1 transition-colors" title="複製此句">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm font-semibold text-ink leading-relaxed py-2 font-serif min-h-[48px]">「${t.text}」</p>
+                    <div class="mt-4 pt-3 border-t border-xuan-dark/50 flex items-center justify-between">
+                        <div class="flex flex-wrap gap-1">${tagsHtml}</div>
+                    </div>
+                `;
+                cardContainer.appendChild(card);
+            });
+
+            // 渲染梗圖
+            const memeTag = sentenceObj.memeTag;
+            const memeImgMap = {
+                '工作疲憊': '不想上班.jpg',
+                '躺平':     '躺平.jpeg',
+                '飲料療癒': '快樂的一天.jpg',
+                '音樂記憶': '破防.png'
+            };
+            document.getElementById('meme-img').src = memeImgMap[memeTag] || '不想上班.jpg';
+
+            const memeBadgeMap = {
+                '工作疲憊': '#工作倦怠',
+                '躺平':     '#躺平未遂',
+                '飲料療癒': '#小確幸',
+                '音樂記憶': '#情緒破防'
+            };
+            document.getElementById('quick-meme-badge').innerText = memeBadgeMap[memeTag] || memeTag;
+
+            const memeReasonMap = {
+                '工作疲憊': '躺成這樣不是懶，是靈魂已經先打卡下班。\n今天的我不是不想努力，只是身體不允許。',
+                '躺平':     '我只是想安靜躺一下，為何世界卻在一旁苦苦相逼？',
+                '飲料療癒': '有些快樂來得很突然，像飲料剛好很好喝，像回家的路上都沒遇到紅燈，像錢包裡的錢剛好夠付。\n今天真是最棒的一天！',
+                '音樂記憶': '我以為我已經沒事了，或許我還是放不下吧......'
+            };
+            document.getElementById('quick-meme-desc').innerText = memeReasonMap[memeTag] || '';
+
+            // 文化洞察：整體 + 各語氣列點
+            document.getElementById('quick-culture-insight').innerText = data.cultureInsight || '語言媒介背後往往存在特定的情感重構機制，各具尊嚴。';
+
+            const toneInsightsList = document.getElementById('quick-tone-insights');
+            toneInsightsList.innerHTML = '';
+            const prebuilt = PREBUILT_TRANSLATIONS[selectedQuickSentenceId];
+            if (prebuilt) {
+                selectedQuickTones.forEach(tId => {
+                    const toneData = prebuilt[tId];
+                    const toneConfig = TONE_TEMPLATES.find(t => t.id === tId);
+                    if (toneData?.insight && toneConfig) {
+                        const li = document.createElement('li');
+                        li.className = 'text-xs text-ink leading-relaxed flex gap-2';
+                        li.innerHTML = `<span class="font-bold shrink-0" style="color:${toneConfig.color}">▸ ${toneConfig.name}</span><span class="text-ink-light">${toneData.insight}</span>`;
+                        toneInsightsList.appendChild(li);
+                    }
+                });
+                toneInsightsList.classList.toggle('hidden', toneInsightsList.children.length === 0);
+            }
+
+            resultsArea.classList.remove('hidden');
+            
+            // 使用100毫秒延遲確保渲染高度到位後，直接精準平滑定位在「翻譯成果」這個標題元件上
+            setTimeout(() => {
+                const resultsTitle = document.getElementById('quick-results-title');
+                if (resultsTitle) {
+                    resultsTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+
+
+        // ------------------ (7) 翻譯啟動 - 自由輸入模式 ------------------
+
+        // 呼叫本地 Ollama gemma3:4b
+        async function callOpenAI(text, tones) {
+            if (typeof OPENAI_API_KEY === 'undefined' || OPENAI_API_KEY.startsWith('sk-請')) {
+                throw new Error('尚未填入 OpenAI API Key，請編輯 config.js');
+            }
+
+            const toneGuides = {
+                classical:  { name: '古典文言風', example: '「今日疲甚，實不欲赴職。」', hint: '用文言文，精煉含蓄，4到15字為佳，不需解釋' },
+                anonymous:  { name: '校園匿名社群風', example: '「有沒有人也會這樣，明明沒做什麼大事，但今天就是累到完全不想上班😭。」', hint: '以「有沒有人也會⋯」開頭或類似句式，口語溫和，結尾可加emoji' },
+                bilingual:  { name: '中英混用風', example: '「Oh my god，期末這樣搞真的太 dramatic 了，我的 GPA 要 RIP 了啦。」', hint: '中文為主骨架，自然穿插英文單字（oh my god、literally、so done、iconic、lowkey、vibe、RIP等），帶有美式 mean girl 的誇張、高傲、戲劇感，像在講八卦；禁止整句翻成英文' },
+                elder:      { name: '長輩風', example: '「工作辛苦了！記得多喝溫開水，身體健康最重要，平安順心。」', hint: '充滿叮嚀與關心，提到健康、喝水、保重，溫暖但稍囉嗦' },
+                colloquial: { name: '台式口語風', example: '「期末要爆掉了啦，這真的很誇張欸，人都快不行了。」', hint: '台灣口語，直接有力，「啦」「欸」「喔」等語助詞，情緒外放' },
+                cyberpunk:  { name: '賽博龐克風', example: '「偵測到學術任務量超載，系統效能逼近臨界，緊急申請休眠授權。」', hint: '用科技/系統隱喻，冷靜語氣，批判資本或制度，充滿未來感' }
+            };
+
+            const toneInstructions = tones.map(tId => {
+                const g = toneGuides[tId];
+                return `  - style="${tId}"（${g.name}）\n    風格提示：${g.hint}\n    範例：${g.example}`;
+            }).join('\n');
+
+            const toneInsightInstructions = tones.map(tId => {
+                const g = toneGuides[tId];
+                return `  - "${tId}"：用一句話說明「${text}」這句話在${g.name}語境下的文化意涵或情緒轉化邏輯`;
+            }).join('\n');
+
+            const prompt = `你是繁體中文語氣轉換與文化分析專家。請將原句改寫成指定風格，並提供深度文化洞察，只輸出 JSON，禁止加任何說明或 markdown。
+
+原句：「${text}」
+
+請輸出以下 ${tones.length} 種語氣（style 欄位用英文 id）：
+${toneInstructions}
+
+文化洞察要求：
+- cultureInsight：只針對「${text}」這句話本身，分析它在當代生活中折射的情緒狀態、社會處境或心理需求（80-120字，繁體中文）；禁止在此提及任何語氣風格名稱或語氣比較
+- toneInsights：針對每種選定語氣，各用一句話（30-50字）說明該語氣如何處理原句的情緒，以及背後的文化邏輯
+${toneInsightInstructions}
+
+輸出格式：
+{"translations":[{"style":"id","text":"轉換後的句子","tags":["標籤1","標籤2","標籤3"]}],"cultureInsight":"整體文化洞察","toneInsights":{"classical":"","anonymous":"","bilingual":"","elder":"","colloquial":"","cyberpunk":""}}`;
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.8,
+                    response_format: { type: 'json_object' }
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error?.message || `OpenAI HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            const parsed = JSON.parse(data.choices[0].message.content);
+
+            parsed.translations = parsed.translations.map(t => {
+                const config = TONE_TEMPLATES.find(tc => tc.id === t.style);
+                return { ...t, style: config ? config.name : t.style };
+            });
+
+            return parsed;
+        }
+
+        async function startTranslationFree() {
+            const rawInput = document.getElementById('user-custom-input').value.trim();
+            if (!rawInput) {
+                showToast('請先輸入你想翻譯的句子！', 'warning');
+                return;
+            }
+            if (rawInput.length < 5) {
+                showToast('句子太短，建議至少輸入 5 個字，轉譯效果會更明顯且富有深度！', 'warning');
+                return;
+            }
+            if (selectedFreeTones.length === 0) {
+                showToast('請選擇至少 1 種、最多 3 種翻譯語氣！', 'warning');
+                return;
+            }
+
+            document.getElementById('empty-state-free').classList.add('hidden');
+            document.getElementById('results-area-free').classList.add('hidden');
+            document.getElementById('loader-free').classList.remove('hidden');
+
+            try {
+                const results = await callOpenAI(rawInput, selectedFreeTones);
+                renderFreeResults(results, rawInput);
+            } catch (err) {
+                console.error('OpenAI 呼叫失敗：', err);
+                showToast('AI 連線失敗：' + err.message + '（已切換本地模擬）', 'warning');
+                const localFallback = simulateSmartLocalTranslation(rawInput, selectedFreeTones);
+                renderFreeResults(localFallback, rawInput);
+            } finally {
+                document.getElementById('loader-free').classList.add('hidden');
+            }
+        }
+
+        function renderFreeResults(data, rawInput) {
+            const resultsArea = document.getElementById('results-area-free');
+            const cardsContainer = document.getElementById('translated-cards-free');
+            cardsContainer.innerHTML = '';
+
+            data.translations.forEach(t => {
+                const toneConfig = TONE_TEMPLATES.find(temp => temp.id === t.style || temp.name === t.style);
+                const color = toneConfig ? toneConfig.color : '#2E2723';
+                const icon = toneConfig ? toneConfig.icon : 'fa-comment';
+
+                const card = document.createElement('div');
+                card.className = 'xuan-card rounded-xl p-5 border relative overflow-hidden hover:shadow-sm transition-all';
+                card.style.borderLeft = `5px solid ${color}`;
+
+                let tagsHtml = '';
+                t.tags.forEach(tg => {
+                    tagsHtml += `<span class="bg-xuan-dark/30 text-ink text-[10px] px-2 py-0.5 rounded mr-1">#${tg}</span>`;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold" style="color: ${color}">
+                            <i class="fa-solid ${icon} mr-1"></i> ${toneConfig ? toneConfig.name : t.style}
+                        </span>
+                        <button onclick="copyToClipboard('${t.text}')" class="text-xs text-ink-light hover:text-cinnabar transition-colors" title="複製">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm font-semibold text-ink leading-relaxed font-serif min-h-[40px]">「${t.text}」</p>
+                    <div class="mt-4 flex flex-wrap gap-1">${tagsHtml}</div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+
+            // 運作矩陣表填充
+            const matrixBody = document.getElementById('culture-matrix-rows');
+            matrixBody.innerHTML = '';
+            
+            const matrixMap = {
+                'classical': { mech: '含蓄、節制、托物言志', symbol: '古典書寫與典雅表達' },
+                'anonymous': { mech: '溫和、傾訴、發問尋求共鳴', symbol: '匿名平台中共同經歷的情感相連' },
+                'bilingual': { mech: '自然混雜、工作語態、日常自信', symbol: '全球化與都會職場的習慣表達' },
+                'elder': { mech: '溫馨關心、健康祝福、叮嚀親情', symbol: '代際溝通與家庭群組的純粹關懷' },
+                'colloquial': { mech: '直接坦率、生命力強、重情面與直接', symbol: '地方口語和親近朋友間的無隔閡互動' },
+                'cyberpunk': { mech: '批判、未來解讀、系統控制隱喻', symbol: '對現代社會勞動與生產力體制的反思' }
+            };
+
+            data.translations.forEach(t => {
+                const config = TONE_TEMPLATES.find(temp => temp.id === t.style || temp.name === t.style);
+                const styleId = config ? config.id : 'anonymous';
+                const meta = matrixMap[styleId] || matrixMap['anonymous'];
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-xuan-dark/30 hover:bg-xuan-dark/5 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-2 font-bold text-ink">${config ? config.name : t.style}</td>
+                    <td class="p-2 text-ink-light">${meta.mech}</td>
+                    <td class="p-2 text-ink-light">${meta.symbol}</td>
+                `;
+                matrixBody.appendChild(tr);
+            });
+
+            // 洞察
+            document.getElementById('free-culture-insight').innerText = data.cultureInsight || '經由即時分析，您的句子折射出多維度的情緒轉化可能，展現媒介變遷中話語權的高雅重構。';
+
+            const freeToneInsightsList = document.getElementById('free-tone-insights');
+            freeToneInsightsList.innerHTML = '';
+            if (data.toneInsights) {
+                selectedFreeTones.forEach(tId => {
+                    const insight = data.toneInsights[tId];
+                    const toneConfig = TONE_TEMPLATES.find(t => t.id === tId);
+                    if (insight && toneConfig) {
+                        const li = document.createElement('li');
+                        li.className = 'text-xs leading-relaxed flex gap-2';
+                        li.innerHTML = `<span class="font-bold shrink-0" style="color:${toneConfig.color}">▸ ${toneConfig.name}</span><span class="text-ink-light">${insight}</span>`;
+                        freeToneInsightsList.appendChild(li);
+                    }
+                });
+                freeToneInsightsList.classList.toggle('hidden', freeToneInsightsList.children.length === 0);
+            }
+
+            resultsArea.classList.remove('hidden');
+            
+            // 使用100毫秒延遲確保自由輸入也同樣精準平滑對齊到「AI 轉譯成果」標題
+            setTimeout(() => {
+                const resultsTitle = document.getElementById('free-results-title');
+                if (resultsTitle) {
+                    resultsTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+
+
+        // ------------------ (8) 智慧本地模擬轉譯引擎 ------------------
+        function simulatePrebuiltTranslation(sentenceId, tones) {
+            const prebuilt = PREBUILT_TRANSLATIONS[sentenceId];
+            if (!prebuilt) return simulateSmartLocalTranslation("我累了", tones);
+
+            const originalObj = QUICK_SENTENCES.find(s => s.id === sentenceId);
+
+            const result = {
+                original_text: originalObj.text,
+                translations: [],
+                cultureInsight: prebuilt.cultureInsight
+            };
+
+            tones.forEach(tId => {
+                const template = TONE_TEMPLATES.find(temp => temp.id === tId);
+                const transData = prebuilt[tId];
+                if (transData) {
+                    result.translations.push({
+                        style: template ? template.name : tId,
+                        text: transData.text,
+                        tags: transData.tags
+                    });
+                }
+            });
+
+            return result;
+        }
+
+        // 用戶自訂輸入時，進行智慧規則轉譯
+        function simulateSmartLocalTranslation(text, tones) {
+            let matchedId = '1';
+            if (text.includes('躺') || text.includes('世界') || text.includes('擺爛') || text.includes('撐')) matchedId = '2';
+            else if (text.includes('喝') || text.includes('吃') || text.includes('飲料') || text.includes('茶') || text.includes('杯') || text.includes('樂')) matchedId = '3';
+            else if (text.includes('歌') || text.includes('樂') || text.includes('破防') || text.includes('哭') || text.includes('痛') || text.includes('事')) matchedId = '4';
+            else if (text.includes('累') || text.includes('班') || text.includes('工作') || text.includes('上') || text.includes('忙')) matchedId = '1';
+            else {
+                return generateRuleBasedTranslation(text, tones);
+            }
+
+            const baseResult = simulatePrebuiltTranslation(matchedId, tones);
+            baseResult.original_text = text;
+            return baseResult;
+        }
+
+        // 基於古典/現代語法公式的高質感自由生成機制，絕不使用貶低或嘲諷字詞
+        function generateRuleBasedTranslation(text, tones) {
+            const cleanText = text.replace(/[。，！？、]/g, '');
+            const result = {
+                original_text: text,
+                translations: [],
+                cultureInsight: '您的自訂心聲折射出豐富的情感層次。古典文言風尋求含蓄內斂，校園匿名社群風尋求溫柔共鳴，長輩風體現溫馨守護，賽博龐克風則將情緒編碼為人機關係的批判。'
+            };
+
+            tones.forEach(tId => {
+                let transText = "";
+                let tags = [];
+
+                switch(tId) {
+                    case 'classical':
+                        transText = `竊聞：「${cleanText}」，吾心戚戚，願寄情於林泉。`;
+                        tags = ['古典典雅', '言志留白', '深致'];
+                        break;
+                    case 'anonymous':
+                        transText = `有沒有人也會這樣，關於「${cleanText}」這件事，真的想聽聽看大家的想法😢。`;
+                        tags = ['溫和求助', '校園共鳴', '匿名發文'];
+                        break;
+                    case 'bilingual':
+                        transText = `For "${cleanText}", I think we should find a better strategy to handle the whole mood。`;
+                        tags = ['日常混用', '都會語態', '工作溝通'];
+                        break;
+                    case 'elder':
+                        transText = `凡事往好處想，順心平安。關於「${cleanText}」，也要記得保重身體，多喝熱水。`;
+                        tags = ['平安順心', '家庭親情', '健康溫馨'];
+                        break;
+                    case 'colloquial':
+                        transText = `我是覺得「${cleanText}」這真的沒什麼，放寬心，兄弟都在這陪你。`;
+                        tags = ['直率生命力', '朋友陪伴', '產生地感'];
+                        break;
+                    case 'cyberpunk':
+                        transText = `警報：偵測到與「${cleanText}」相關之效能過載，試圖重新設定情感防護協定。`;
+                        tags = ['機能系統', '資本批判', '防護協定'];
+                        break;
+                }
+
+                result.translations.push({
+                    style: TONE_TEMPLATES.find(temp => temp.id === tId).name,
+                    text: transText,
+                    tags: tags
+                });
+            });
+
+            return result;
+        }
+
+
+        // ------------------ (9) 工具方法 ------------------
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('已成功複製到剪貼簿！', 'success');
+            } catch (err) {
+                showToast('複製失敗，請手動複製！', 'warning');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const msg = document.getElementById('toast-msg');
+
+            msg.innerText = message;
+            
+            if (type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+
+            toast.classList.remove('translate-y-12', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-12', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
